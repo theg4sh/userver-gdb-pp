@@ -62,8 +62,9 @@ $1 = {holder_ = {static kInvalidVersion = 18446744073709551615,
 }}
 ...
 ```
+Looks like a mess and useless for debugging a logical issues.
 
-Now prepare pretty-printers
+Now prepare pretty-printers:
 ```(sh)
 git clone https://github.com/theg4sh/userver-gdb-pp
 export USERVER_GDB_PP_DIR="$(readlink -f userver-gdb-pp)"
