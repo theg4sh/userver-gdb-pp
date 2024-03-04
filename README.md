@@ -18,32 +18,40 @@ debug.
 git clone --depth 1 https://github.com/userver-framework/userver
 cd userver
 mkdir build_debug && cd build_debug
-cmake -DCMAKE_CXX_COMPILER=clang++-17 -DUSERVER_FEATURE_GRPC=OFF -DUSERVER_FEATURE_POSTGRESQL=OFF -DUSERVER_FEATURE_MYSQL=OFF -DUSERVER_FEATURE_STACKTRACE=OFF -DUSERVER_FEATURE_CLICKHOUSE=OFF -DUSERVER_USE_LD=lld ..
+cmake -DCMAKE_CXX_COMPILER=clang++-17 -DUSERVER_FEATURE_GRPC=OFF -DUSERVER_FEATURE_POSTGRESQL=OFF \
+      -DUSERVER_FEATURE_MYSQL=OFF -DUSERVER_FEATURE_STACKTRACE=OFF -DUSERVER_FEATURE_CLICKHOUSE=OFF \
+      -DUSERVER_USE_LD=lld ..
 make
 ```
 
 Now gdb needs to be configured regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
 The way how to do it is left to the user's discretion.
 
-Let's describe the following steps to enable pretty-printers using sample/json2yaml.
+#### Usage sample
 
-For experimenting with lets create `gdb-run.sh` with the following content
+Let's describe the steps required to enable pretty-printers using sample/json2yaml.
+
+Simplified, we need to provide scripts-directory and safe-path to gdb, like this:
+```
+gdb \
+    -iex "add-auto-load-scripts-directory samples/json2yaml" \
+    -iex 'add-auto-load-safe-path samples/json2yaml' \
+    ...
+```
+
+To make an experiment lets create `gdb-run.sh` with the following content:
 ```(sh)
 #!/bin/bash
 
-#$PRETTY_PRINTER_LIST="-ex 'info pretty-printer'"
-#$SHOW_SCRIPTS_DIRECTORY="-ex 'show auto-load scripts-directory'"
-#$SHOW_AUTOLOAD_SAFEPATH="-ex 'show auto-load safe-path'"
+JSON_SAMPLE='r <<<"{\"a\":[1,{}],\"b\":[true,false],\"c\":{\"internal\":{\"subkey\":2}},\"i\":-1,\"u\":1,\"i64\":-18446744073709551614,\"u64\":18446744073709551614,\"d\":0.4}"'
 
+# at userver root directory
 cd build_debug && \
 gdb \
     -iex "add-auto-load-scripts-directory samples/json2yaml" \
     -iex 'add-auto-load-safe-path samples/json2yaml' \
-    $SHOW_AUTOLOAD_SAFEPATH \
-    $SHOW_SCRIPTS_DIRECTORY \
-    $PRETTY_PRINTER_LIST \
     -ex 'b json2yaml.cpp:53' \
-    -ex 'r <<<"{\"a\":[1,{}],\"b\":[true,false],\"c\":{\"internal\":{\"subkey\":2}},\"i\":-1,\"u\":1,\"i64\":-18446744073709551614,\"u64\":18446744073709551614,\"d\":0.4}"' \
+    -ex $JSON_SAMPLE \
     -ex 'p json' \
     -ex 'fg' \
     -ex 'q' \
