@@ -5,6 +5,7 @@ from userver_gdb_pp.formats.json import rapidjson
 
 # @see (gdb) info types userver::v2_0_0_rc::formats::json::Value
 
+
 class FormatsJsonValue(gdb.ValuePrinter):
     "Print formats::json::Value"
 
@@ -16,7 +17,7 @@ class FormatsJsonValue(gdb.ValuePrinter):
             return f'{self.__val.type}(value_ptr_=nullptr)'
 
         value = self.__val['value_ptr_']
-        native_data = value['data_'] # rapidjson
+        native_data = value['data_']  # rapidjson
 
         data_type = rapidjson.rj_get_type(native_data['f']['flags'])
         data = data_type(value, native_data['f']['flags'])
@@ -32,4 +33,3 @@ def register_printers(pp_collection):
         r'(^.*::|^)formats::json::Value$',
         FormatsJsonValue,
     )
-

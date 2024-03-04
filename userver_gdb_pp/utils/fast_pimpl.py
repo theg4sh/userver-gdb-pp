@@ -2,6 +2,7 @@ import gdb
 
 # @see (gdb) info types userver::v2_0_0_rc::utils::FastPimpl
 
+
 class UtilsFastPimpl(gdb.ValuePrinter):
     "Print utils::FastPimpl<T>"
 

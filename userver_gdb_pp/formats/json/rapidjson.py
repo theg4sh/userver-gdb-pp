@@ -2,6 +2,7 @@ import gdb
 
 from userver_gdb_pp.formats.json import rapidjson_constants as constants
 
+
 def rj_get_pointer(ptr, rj_type):
     # FIXME: support native pointer in case of w/o 48bit optimization
     # @see RAPIDJSON_48BITPOINTER_OPTIMIZATION,
@@ -29,7 +30,8 @@ class RJObjectType(RJBaseType):
         res = '{'
         sep = ''
         members = rj_get_pointer(
-            data['members'], constants.RJ_GENERIC_MEMBER,
+            data['members'],
+            constants.RJ_GENERIC_MEMBER,
         )
         for n in range(sz):
             member = members[n]
@@ -37,16 +39,17 @@ class RJObjectType(RJBaseType):
 
             name_flags = name['data_']['f']['flags']
             value_flags = value['data_']['f']['flags']
-            tname  = rj_get_type(name_flags)
+            tname = rj_get_type(name_flags)
             tvalue = rj_get_type(value_flags)
 
-            pname  = tname(name, name_flags)
+            pname = tname(name, name_flags)
             pvalue = tvalue(value, value_flags)
 
             res += f'{sep}{pname.to_string()}:{pvalue.to_string()}'
             sep = ','
         res += '}'
         return res
+
 
 class RJArrayType(RJBaseType):
     def to_string(self):
@@ -56,7 +59,8 @@ class RJArrayType(RJBaseType):
             return '[]'
 
         elements = rj_get_pointer(
-            data['elements'], constants.RJ_GENERIC_VALUE,
+            data['elements'],
+            constants.RJ_GENERIC_VALUE,
         )
         res = '['
         sep = ''
@@ -70,6 +74,7 @@ class RJArrayType(RJBaseType):
         res += ']'
         return res
 
+
 class RJNumberType(RJBaseType):
     def _is(self, flag):
         return (self._flags & flag) == flag
@@ -77,16 +82,17 @@ class RJNumberType(RJBaseType):
     def to_string(self):
         data = self._val['data_']['n']
         if self._is(constants.RJFlag_kNumberIntFlag):
-           return data['i']['i']
+            return data['i']['i']
         if self._is(constants.RJFlag_kNumberUintFlag):
-           return data['u']['u']
+            return data['u']['u']
         if self._is(constants.RJFlag_kNumberInt64Flag):
-           return data['i64']
+            return data['i64']
         if self._is(constants.RJFlag_kNumberUint64Flag):
-           return data['u64']
+            return data['u64']
         if self._is(constants.RJFlag_kNumberDoubleFlag):
-           return data['d']
+            return data['d']
         return data
+
 
 class RJStringType(RJBaseType):
     def to_string(self):
@@ -97,6 +103,7 @@ class RJStringType(RJBaseType):
             return '"{0}"'.format(data['ss']['str'].string())
         return '"{0}"'.format(data['s']['str'].string())
 
+
 class RJBoolType(RJBaseType):
     def to_string(self):
         if (self._flags & constants.RJFlag_kBoolFlag) == 0:
@@ -106,6 +113,7 @@ class RJBoolType(RJBaseType):
         if self._flags == constants.RJFlag_kTrueFlag:
             return 'true'
         return self._val
+
 
 class RJNullType(RJBaseType):
     def to_string(self):
@@ -130,6 +138,3 @@ def rj_get_type(flags):
     raise Exception(
         f'Unsupported rapidjson flag assigning to type: {flags}',
     )
-
-
-
