@@ -1,8 +1,8 @@
 ### Description
 
 This is a gdb pretty-printers for common types of userver-framework.
-This is experimental feature, use this code at your own risk.
-Feel free to make an issues or pull-requests.
+This is experimental feature to debug logical issues, use this code at your own risk.
+Feel free to make an issue or pull-request.
 
 
 ```(sh)
@@ -22,12 +22,12 @@ cmake -DCMAKE_CXX_COMPILER=clang++-17 -DUSERVER_FEATURE_GRPC=OFF -DUSERVER_FEATU
 make
 ```
 
-Now gdb needs to be configure regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for you executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` section in [References](#References).
+Now gdb needs to be configure regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
 The way how to do it is left to the user's discretion.
 
 Let's describe the following steps to enable pretty-printers using sample/json2yaml.
 
-For experiment, lets create `gdb-run.sh` with the following content
+For experimenting with lets create `gdb-run.sh` with the following content
 ```(sh)
 #!/bin/bash
 
@@ -35,8 +35,9 @@ For experiment, lets create `gdb-run.sh` with the following content
 #$SHOW_SCRIPTS_DIRECTORY="-ex 'show auto-load scripts-directory'"
 #$SHOW_AUTOLOAD_SAFEPATH="-ex 'show auto-load safe-path'"
 
+cd build_debug && \
 gdb \
-    -iex 'add-auto-load-scripts-directory samples/json2yaml' \
+    -iex "add-auto-load-scripts-directory samples/json2yaml" \
     -iex 'add-auto-load-safe-path samples/json2yaml' \
     $SHOW_AUTOLOAD_SAFEPATH \
     $SHOW_SCRIPTS_DIRECTORY \
@@ -62,7 +63,7 @@ $1 = {holder_ = {static kInvalidVersion = 18446744073709551615,
 }}
 ...
 ```
-Looks like a mess and useless for debugging a logical issues.
+Looks like a mess and useless for debugging a logical issue.
 
 Now prepare pretty-printers:
 ```(sh)
@@ -73,7 +74,7 @@ export USERVER_GDB_PP_DIR="$(readlink -f userver-gdb-pp)"
   ln -s $USERVER_GDB_PP_DIR/userver_gdb_pp/__init__.py userver-samples-json2yaml-gdb.py)
 ```
 
-and let's check the result:
+and now check the result:
 ```(sh)
 $ bash ./gdb-run.sh
 ...
@@ -82,6 +83,7 @@ Breakpoint 1, main () at /home/arkcoon/repos/theg4sh/userver/samples/json2yaml/j
 $1 = userver::v2_0_0_rc::formats::json::Value(version=0,data={"a":[1,{}],"b":[true,false],"c":{"internal":{"subkey":2}},"i":-1,"u":1,"i64":-1.8446744073709552e+19,"u64":18446744073709551614,"d":0.40000000000000002})
 ...
 ```
+That's much better!
 
 
 ### References
