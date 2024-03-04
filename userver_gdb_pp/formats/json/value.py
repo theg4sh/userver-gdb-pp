@@ -10,26 +10,15 @@ class FormatsJsonValue(gdb.ValuePrinter):
         self.__val = val
 
     def to_string(self):
-        versioned_data_ptr = self.__val['holder_']['data_']['_M_ptr']
-        if versioned_data_ptr is None:
-            return f'{self.__val.type}(kNone)'
-        versioned_data = versioned_data_ptr.dereference()
+        if self.__val['value_ptr_'] is None:
+            return f'{self.__val.type}(value_ptr_=nullptr)'
 
-        # native -> rapidjson
-        native_data = versioned_data['native']['data_']
+        value = self.__val['value_ptr_']
+        native_data = value['data_'] # rapidjson
 
         data_type = rapidjson.rj_get_type(native_data['f']['flags'])
-        version = versioned_data['version'].cast(
-            gdb.lookup_type('unsigned long'),
-        )
-        data = data_type(
-            versioned_data['native'],
-            native_data['f']['flags'],
-        )
-        return (
-            f'{self.__val.type}(version={version},'
-            f'data={data.to_string()})'
-        )
+        data = data_type(value, native_data['f']['flags'])
+        return f'{self.__val.type}(data={data.to_string()})'
 
     def display_init(self):
         return 'formats::json::Value'
