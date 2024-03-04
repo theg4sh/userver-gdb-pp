@@ -22,7 +22,7 @@ cmake -DCMAKE_CXX_COMPILER=clang++-17 -DUSERVER_FEATURE_GRPC=OFF -DUSERVER_FEATU
 make
 ```
 
-Now gdb needs to be configure regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
+Now gdb needs to be configured regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
 The way how to do it is left to the user's discretion.
 
 Let's describe the following steps to enable pretty-printers using sample/json2yaml.
