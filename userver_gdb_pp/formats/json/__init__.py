@@ -1,5 +1,5 @@
 from userver_gdb_pp.formats.json import value
 
-def register_printers(objfile):
-    value.register_printers(objfile)
+def register_printers(pp_collection):
+    value.register_printers(pp_collection)
 

@@ -3,6 +3,8 @@ import gdb.printing
 
 from userver_gdb_pp.formats.json import rapidjson
 
+# @see (gdb) info types userver::v2_0_0_rc::formats::json::Value
+
 class FormatsJsonValue(gdb.ValuePrinter):
     "Print formats::json::Value"
 
@@ -23,18 +25,11 @@ class FormatsJsonValue(gdb.ValuePrinter):
     def display_init(self):
         return 'formats::json::Value'
 
-def formats_json_value_lookup_function():
-    pp = gdb.printing.RegexpCollectionPrettyPrinter('userver')
-    pp.add_printer(
+
+def register_printers(pp_collection):
+    pp_collection.add_printer(
         'formats::json::Value',
         r'(^.*::|^)formats::json::Value$',
         FormatsJsonValue,
-    )
-    return pp
-
-def register_printers(objfile):
-    gdb.printing.register_pretty_printer(
-        objfile,
-        formats_json_value_lookup_function(),
     )
 
