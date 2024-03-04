@@ -27,11 +27,11 @@ make
 Now gdb needs to be configured regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
 The way how to do it is left to the user's discretion.
 
-#### Usage sample
-
 Let's describe the steps required to enable pretty-printers using sample/json2yaml.
 
-Simplified, we need to provide scripts-directory and safe-path to gdb, like this:
+#### Usage sample
+
+Simplified, we need to provide to gdb `scripts-directory` and `safe-path` where our executable file is placed, like this:
 ```
 gdb \
     -iex "add-auto-load-scripts-directory samples/json2yaml" \
