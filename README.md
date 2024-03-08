@@ -9,6 +9,12 @@ How it looks when printing a `formats::json::Value` variable:
 $1 = userver::v2_0_0_rc::formats::json::Value(version=0,data={"a":[1,{}],"b":[true,false],"c":{"internal":{"subkey":2}},"i":-1,"u":1,"i64":-1.8446744073709552e+19,"u64":18446744073709551614,"d":0.40000000000000002})
 ```
 
+
+### Dependencies
+
+Fedora: `sudo dnf debuginfo-install yaml-cpp-0.7.0-4.fc39.x86_64`
+
+
 ### Usage
 
 At least you need pull [userver-framework](https://github.com/userver-framework/userver) and build

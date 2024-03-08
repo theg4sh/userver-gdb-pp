@@ -4,8 +4,6 @@ import gdb
 from userver_gdb_pp.helpers import std_vector
 from userver_gdb_pp.helpers import std_smart_ptr
 
-# Requirements:
-#   Fedora: sudo dnf debuginfo-install yaml-cpp-0.7.0-4.fc39.x86_64
 
 # @see yaml-cpp/node/type.h Yaml::NodeType::value
 YAML_NodeType_Undefined = 0
