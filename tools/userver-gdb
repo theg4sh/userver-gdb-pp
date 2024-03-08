@@ -1,0 +1,36 @@
+#!/bin/bash
+
+USERVER_GBD_PP_DEFAULT_DIR="$(readlink -f $0 | xargs dirname | xargs dirname)"
+USERVER_GBD_PP_DIR="${USERVER_GBD_PP_DIR:-$USERVER_GBD_PP_DEFAULT_DIR}"
+GDB="${GDB:-/usr/bin/gdb}"
+
+binpos=$(for n in $(seq 1 ${#@}); do
+	pos="$((n))"
+	arg="${!pos}"
+	if [[ "${arg}" == '--args' ]]; then
+		echo "$((pos+1))"
+		break
+	fi
+done)
+
+if test -z "${binpos}"; then
+	echo "Error: failed to find executable." >&2
+	echo "  Make sure you're running script with --args as separator of gdb-executable arguments." >&2
+	exit 1
+fi
+
+OBJFILE_GDB_PY="${!binpos}-gdb.py"
+if test -e "$OBJFILE_GDB_PY"; then
+	echo "Making objfile-gdb.py: $OBJFILE_GDB_PY" >&2
+	ln -s -f \
+		"${USERVER_GBD_PP_DIR}/userver_gbd_pp/__init__.py" \
+		"$OBJFILE_GDB_PY"
+fi
+
+
+AUTOLOAD_DIR="$(dirname ${!binpos})"
+set -x
+$GDB \
+	  -iex "add-auto-load-scripts-directory ${AUTOLOAD_DIR}" \
+	  -iex "add-auto-load-safe-path ${AUTOLOAD_DIR}" \
+		"${@}"
