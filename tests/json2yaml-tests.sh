@@ -6,6 +6,7 @@
 
 JSON_SAMPLE='r <<<"{\"a\":[1,{}],\"b\":[true,false],\"c\":{\"internal\":{\"subkey\":2}},\"i\":-1,\"u\":1,\"i64\":-18446744073709551614,\"u64\":18446744073709551614,\"n\":null,\"d\":0.4}"'
 
+
 function run_gdb() {
 	gdb \
 	  -iex 'add-auto-load-scripts-directory samples/json2yaml' \
@@ -26,10 +27,22 @@ function test_formats_json_value() {
 		--args samples/json2yaml/userver-samples-json2yaml
 }
 
+function test_formats_yaml_value() {
+	run_gdb \
+		-ex 'b json2yaml.cpp:53' \
+		-ex "$JSON_SAMPLE" \
+		-ex 's' \
+		-ex 'p *this' \
+		-ex 'fg' \
+		-ex 'q' \
+		--args samples/json2yaml/userver-samples-json2yaml
+}
+
 function test_utils_fast_pimpl() {
+
 	run_gdb \
 		-ex 'b userver::v2_0_0_rc::utils::FastPimpl<YAML::Node, 64ul, 8ul, false>::FastPimpl<YAML::Node const&>(YAML::Node const&)' \
-		-ex $JSON_SAMPLE \
+		-ex "$JSON_SAMPLE" \
 		-ex 'n' \
 		-ex 'p *this' \
 		-ex 'disable breakpoints' \
@@ -39,6 +52,7 @@ function test_utils_fast_pimpl() {
 }
 
 test_formats_json_value
+test_formats_yaml_value
 test_utils_fast_pimpl
 
 # for debugging move extra `-ex ... \` here
