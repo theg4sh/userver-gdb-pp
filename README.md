@@ -33,19 +33,33 @@ make
 Now gdb needs to be configured regarding [Python Auto-Loading](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Python-Auto_002dloading.html#Python-Auto_002dloading) documentation for your executable or library. See objfile script `objfile-gdb.py` and `.debug_gdb_scripts` sections in [References](#References).
 The way how to do it is left to the user's discretion.
 
-Let's describe the steps required to enable pretty-printers using sample/json2yaml.
+#### Loading pretty-printers using a script
 
-#### Usage sample
+`tools/userver-gdb` is a simple bash script to automate gdb configuration in-fly.
 
-Simplified, we need to provide to gdb `scripts-directory` and `safe-path` where our executable file is placed, like this:
+Instead of using gdb directly `gdb [<gdb-arg>...] --args <executable> [<executable-arg>...]`
+you can run the script:
 ```
+tools/userver-gdb [<gdb-arg>...] --args <executable> [<executable-arg>...]
+```
+
+The script will create link objfile-gdb.py in the same directory as the executable file, and it will execute gdb with additional arguments needed to initialize the pretty-printers.
+
+#### Loading pretty-printers manually
+
+For a better understanding the magic behind the scenes, let's take a look the steps needed to enable pretty-printers for sample/json2yaml.
+
+Basically, we need to tell gdb to set the `scripts-directory` and `safe-path` to the path where our executable file is located.
+For example:
+```
+# cd build_debug/
 gdb \
     -iex "add-auto-load-scripts-directory samples/json2yaml" \
     -iex 'add-auto-load-safe-path samples/json2yaml' \
     ...
 ```
 
-To make an experiment lets create `gdb-run.sh` with the following content:
+To make an experiment lets create shell-script `gdb-run.sh` with the following content:
 ```(sh)
 #!/bin/bash
 
