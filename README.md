@@ -1,3 +1,7 @@
+### ARCHIVED
+
+GDB scripts represented in this repository is already merged inside of [userver-framework's scripts/gdb](https://github.com/userver-framework/userver/commit/c6e5d3ee589b562d93a9e49191bff3db09a0132f) with improvements for debugging namespace detection.
+
 ### Description
 
 This is a gdb pretty-printers for common types of userver-framework.
